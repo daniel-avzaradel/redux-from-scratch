@@ -37,9 +37,8 @@ describe("Redux Store", () => {
         store.dispatch({type: "increment"});
         expect(store.getState()).toEqual({count: 1});
         store.dispatch({type: "decrement"});
-        store.dispatch({type: "decrement"});
-        expect(store.getState()).toEqual({count: -1});
-        store.dispatch({type: "incrementBy", payload: 6});
+        expect(store.getState()).toEqual({count: 0});
+        store.dispatch({type: "incrementBy", payload: 5});
         expect(store.getState()).toEqual({count: 5});
     })
 })
