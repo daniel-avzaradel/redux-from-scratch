@@ -1,4 +1,3 @@
-import { subscribe } from 'diagnostics_channel';
 import { describe, it, expect } from 'vitest';
 
 const createStore = <State, Action>(initialState: State, reducer: (state: State, action: Action) => State) => {
