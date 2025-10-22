@@ -1,10 +1,10 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 
 const createStore = <State, Action>(initialState: State, reducer: (state: State, action: Action) => State) => {
 
     let state = initialState;
     const getState = () => state;
-    const subscribers = new Set<(state: State) => void>;
+    const subscribers = new Set<(state: State) => void>();
 
     return {
         getState,
@@ -14,6 +14,7 @@ const createStore = <State, Action>(initialState: State, reducer: (state: State,
         },
         subscribe: (callback: (state: State) => void) => {
             subscribers.add(callback);
+            callback(state);
             return () => subscribers.delete(callback)
         }
     }
@@ -38,8 +39,14 @@ describe("Redux Store", () => {
         }
 
         const store = createStore(initialState, reducer);
+        const noop = {sub: () => {}};
+        vi.spyOn(noop, 'sub');
+        store.subscribe(noop.sub);
+
         expect(store.getState()).toEqual({count: 0});
+        expect(noop.sub).toHaveBeenCalledTimes(1);
         store.dispatch({type: "increment"});
+        
         expect(store.getState()).toEqual({count: 1});
         store.dispatch({type: "decrement"});
         expect(store.getState()).toEqual({count: 0});
