@@ -4,13 +4,18 @@ const createStore = <State, Action>(initialState: State, reducer: (state: State,
 
     let state = initialState;
     const getState = () => state;
+    const subscribers = new Set<(state: State) => void>;
 
     return {
         getState,
         dispatch: (action: Action) => {
-            return state = reducer(state, action)
+            state = reducer(state, action);
+            subscribers.forEach(subscriber => subscriber(state))
         },
-        subscribe: () => {}
+        subscribe: (callback: (state: State) => void) => {
+            subscribers.add(callback);
+            return () => subscribers.delete(callback)
+        }
     }
 } 
 
